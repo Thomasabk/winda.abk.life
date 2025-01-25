@@ -1,14 +1,197 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Hello, World!</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-      <h1 class="title">Hello World! </h1>
-      <p>Welcome to<strong>Winda Website !</strong> statement.</p>
-      <img src="images/home.jpg" alt="Winda with kids" />
-      <p id="currentTime"></p>
-      <script src="script.js"></script>
-  </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winda - Your Super Nanny!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #ffe4e1, #ffdab9);
+            overflow: hidden;
+            color: #333;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #ff6f61;
+            text-shadow: 2px 2px #ffd700;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #444;
+            max-width: 800px;
+            margin: 20px auto;
+            line-height: 1.6;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .feature {
+            background: #fff5e6;
+            border: 2px solid #ffa07a;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature h3 {
+            font-size: 1.5rem;
+            color: #ff4500;
+        }
+
+        .feature p {
+            color: #333;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="fireworks"></canvas>
+
+    <div class="container">
+        <h1>Welcome to Winda's World!</h1>
+        <p>
+            Looking for the perfect nanny? Look no further! Winda is the superhero nanny you’ve been searching for. With a heart full of love, patience for days, and skills that amaze, Winda is the ultimate partner for every parent.
+        </p>
+
+        <div class="features">
+            <div class="feature">
+                <h3>Endless Patience</h3>
+                <p>
+                    From toddler tantrums to teenage talks, Winda handles it all with grace and calm.
+                </p>
+            </div>
+            <div class="feature">
+                <h3>Creative Activities</h3>
+                <p>
+                    Crafts, storytelling, and fun educational games are Winda’s specialty.
+                </p>
+            </div>
+            <div class="feature">
+                <h3>Healthy Meals</h3>
+                <p>
+                    Winda makes sure every little belly is full of nutritious, delicious food.
+                </p>
+            </div>
+            <div class="feature">
+                <h3>Safety First</h3>
+                <p>
+                    CPR-certified and safety-focused, Winda prioritizes your children’s well-being.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("fireworks");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Firework {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.particles = [];
+
+                for (let i = 0; i < 50; i++) {
+                    this.particles.push({
+                        x: this.x,
+                        y: this.y,
+                        radius: Math.random() * 2 + 1,
+                        velocity: Math.random() * 3 + 2,
+                        angle: Math.random() * Math.PI * 2,
+                        alpha: 1,
+                    });
+                }
+            }
+
+            update() {
+                this.particles.forEach((particle) => {
+                    particle.x += Math.cos(particle.angle) * particle.velocity;
+                    particle.y += Math.sin(particle.angle) * particle.velocity;
+                    particle.alpha -= 0.02;
+                });
+            }
+
+            draw() {
+                this.particles.forEach((particle) => {
+                    if (particle.alpha > 0) {
+                        ctx.beginPath();
+                        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${particle.alpha})`;
+                        ctx.fill();
+                    }
+                });
+            }
+        }
+
+        const fireworks = [];
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+
+                // Remove if fully faded
+                if (firework.particles.every((p) => p.alpha <= 0)) {
+                    fireworks.splice(index, 1);
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        setInterval(() => {
+            fireworks.push(
+                new Firework(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    {
+                        r: Math.floor(Math.random() * 255),
+                        g: Math.floor(Math.random() * 255),
+                        b: Math.floor(Math.random() * 255),
+                    }
+                )
+            );
+        }, 700);
+
+        animate();
+
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+    <img src="images/home.jpg" alt="Winda with kids" />
+</body>
 </html>
